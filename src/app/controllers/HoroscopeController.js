@@ -1,13 +1,15 @@
 const Horoscope = require("../models/Horoscope")
 
 exports.getHoroscope = async (req, res) => {
-    if(!req.params.sign) {
+
+    console.log(req.user)
+    const sign = req.params.sign || req.user.sign
+    if(!sign) {
         return res.status(400).send({error: 'Sign is required'})
     }
 
-    console.log(req.params.sign)
     try {
-        const data = await Horoscope.getHoroscope(req.params.sign)
+        const data = await Horoscope.getHoroscope(sign)
         if(!data) {
             return res.status(404).send({error: 'Horoscope not found'})
         }

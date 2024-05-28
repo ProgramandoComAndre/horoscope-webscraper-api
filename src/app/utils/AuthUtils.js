@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+
 exports.verifyAuth = (req, res, next) => {
     if(!req.headers.authorization) {
         return res.status(401).send({ error: 'Unauthorized' })
@@ -9,14 +11,17 @@ exports.verifyAuth = (req, res, next) => {
         return res.status(401).send({ error: 'Unauthorized' })
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
         if(err) {
             return res.status(401).send({ error: 'Unauthorized' })
         }
-        req.user = decoded
+
+        const user = await User.findOne({ email: decoded.email })
+        if(!user) {
+            return res.status(401).send({ error: 'Unauthorized' })
+        }
+        req.user = user
         next()
     })
-
-    return res.status(500).send({ error: 'Internal Server Error' })
 }
     
