@@ -1,22 +1,48 @@
 const mariaHelenaScraper = require("../../webscraper");
+const mongoose = require('mongoose')
+const paginationPlugin = require('mongoose-aggregate-paginate-v2')
 
-
-class Horoscope {
-    constructor(date,sign ,card_of_day_meaning,love_horoscope, health_horoscope, money_horoscope,lucky_numbers) {
-
-        this.date = date
-        this.sign = sign
-        this.card_of_day_meaning = card_of_day_meaning
-        this.love_horoscope = love_horoscope
-        this.health_horoscope = health_horoscope
-        this.money_horoscope = money_horoscope
-        this.lucky_numbers = lucky_numbers
-
+const horoscopeSchema = new mongoose.Schema({
+    date: {
+        type: String,
+        required: true
+    },
+    sign: {
+        type: String,
+        required: true
+    },
+    card_of_day_meaning: {
+        type: String
+    },
+    love_horoscope: {
+        type: String,
+        required: true
+    },
+    health_horoscope: {
+        type: String,
+        required: true
+    },
+    money_horoscope: {
+        type: String,
+        required: true
+    },
+    lucky_numbers: {
+        type: [Number],
+        required: true
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
+})
 
+horoscopeSchema.plugin(paginationPlugin)
+class Horoscope {
     static async getHoroscope(sign){
         return mariaHelenaScraper(sign)
     }
 }
 
-module.exports = Horoscope
+const HoroscopeModel = mongoose.model('Horoscope', horoscopeSchema)
+module.exports = { HoroscopeModel, Horoscope } // export HoroscopeModel and Horoscope

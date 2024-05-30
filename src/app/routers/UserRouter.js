@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { getHoroscope } = require('../controllers/HoroscopeController')
+const { getHoroscope, saveHoroscope, getUserHoroscopes } = require('../controllers/HoroscopeController')
 const { createUser, confirmEmail, login } = require('../controllers/UserController')
 const { verifyAuth } = require('../utils/AuthUtils')
 const { validateRegistration } = require('../utils/ValidationUtils')
@@ -7,4 +7,6 @@ router.post('/', validateRegistration ,createUser)
 router.patch('/email/:token', confirmEmail)
 router.post('/auth', login)
 router.get('/horoscope' ,verifyAuth, getHoroscope)
+router.post('/horoscope', verifyAuth, saveHoroscope)
+router.get('/user/horoscopes', verifyAuth, getUserHoroscopes)
 module.exports = router

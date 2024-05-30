@@ -12,15 +12,16 @@ async function mariaHelenaScraper(sign="capricornio") {
     const $ = cheerio.load(response.data)
     const date = $('h4').contents()[3].data
     let data = {
-        date: convertDateToISO(date.split('-')[1].trim()),
+        date: new Date().toISOString().split('T')[0],
         sign: sign[0].toUpperCase() + sign.slice(1)
         
     }
-    const horoscope_text = $('strong').contents().map((i, el) => {
+    let horoscope_text = $('strong').contents().map((i, el) => {
         return $(el).text()
     }).get().slice(1)
 
     data.card_of_day_meaning = `${horoscope_text[0].split(':')[1].trim()}${horoscope_text[1]}`
+    horoscope_text = horoscope_text.filter((el) => el != "" || el.trim() != "")
     data.love_horoscope = horoscope_text[2].split(':')[1].trim()
     data.health_horoscope = horoscope_text[3].split(':')[1].trim()
     data.money_horoscope = horoscope_text[4].split(':')[1].trim()
